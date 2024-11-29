@@ -23,11 +23,6 @@ namespace ProniaMVC.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(SliderCreateVM vm)
         {
-            if (!ModelState.IsValid)
-            {
-                return View();
-            }
-
             if (!vm.File.IsValidType("image"))
             {
                 ModelState.AddModelError("File", "File must be image");
@@ -37,6 +32,11 @@ namespace ProniaMVC.Areas.Admin.Controllers
             if (!vm.File.IsValidSize(5 * 1024))
             {
                 ModelState.AddModelError("File", "File must be less than 5MB");
+                return View();
+            }
+
+            if (!ModelState.IsValid)
+            {
                 return View();
             }
             string newFileName = await vm.File.UploadAsync("wwwroot", "imgs", "sliders");
@@ -81,20 +81,13 @@ namespace ProniaMVC.Areas.Admin.Controllers
             var data = await _context.Sliders.FindAsync(id);
 
             if (data is null) return NotFound();
-            if(!ModelState.IsValid) return View();
             if (vm.File != null)
             {
                 if (!vm.File.IsValidType("image"))
-                {
                     ModelState.AddModelError("File", "File type must be image");
-                    return View();
-                }
 
                 if (!vm.File.IsValidSize(5 * 1024))
-                {
                     ModelState.AddModelError("File", "File size must be less than 5MB");
-                    return View();
-                }
 
                 string oldFilePath = Path.Combine(_env.WebRootPath, "imgs", "sliders", data.ImageUrl);
 
@@ -106,6 +99,8 @@ namespace ProniaMVC.Areas.Admin.Controllers
                 string newFileName = await vm.File.UploadAsync("wwwroot", "imgs", "sliders");
                 data.ImageUrl = newFileName;
             }
+            if (!ModelState.IsValid) return View(vm);
+            return View(vm);
             data.Link = vm.Link;
             data.Subtitle_1 = vm.Subtitle_1;
             data.Subtitle_2 = vm.Subtitle_2;
