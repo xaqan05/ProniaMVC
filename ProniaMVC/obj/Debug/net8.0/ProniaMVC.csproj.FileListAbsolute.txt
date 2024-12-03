@@ -536,3 +536,4 @@ C:\Users\user\Desktop\Programming\C#\ProniaMVC\ProniaMVC\obj\Debug\net8.0\refint
 C:\Users\user\Desktop\Programming\C#\ProniaMVC\ProniaMVC\obj\Debug\net8.0\ProniaMVC.pdb
 C:\Users\user\Desktop\Programming\C#\ProniaMVC\ProniaMVC\obj\Debug\net8.0\ProniaMVC.genruntimeconfig.cache
 C:\Users\user\Desktop\Programming\C#\ProniaMVC\ProniaMVC\obj\Debug\net8.0\ref\ProniaMVC.dll
+C:\Users\II novbe\Desktop\Task\ProniaMVC\ProniaMVC\obj\Debug\net8.0\ProniaMVC.sourcelink.json
