@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using ProniaMVC.DataAcces;
 
@@ -9,6 +10,11 @@ namespace ProniaMVC
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddControllersWithViews();
+
+            builder.Services.Configure<FormOptions>(opt =>
+            {
+                opt.MultipartBodyLengthLimit = 1024 * 1024 * 1024;
+            });
 
             builder.Services.AddDbContext<ProniaDbContext>(opt =>
             {

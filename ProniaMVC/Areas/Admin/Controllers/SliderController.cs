@@ -23,37 +23,41 @@ namespace ProniaMVC.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(SliderCreateVM vm)
         {
-            if (!vm.File.IsValidType("image"))
+            Slider slider = new Slider();
+
+            if (vm == null)
             {
-                ModelState.AddModelError("File", "File must be image");
-                return View();
+                ModelState.AddModelError("File", "File is required or file size exceeds the limit.");
+                return View(vm);
             }
 
-            if (!vm.File.IsValidSize(5 * 1024))
+
+            if (vm.File != null)
             {
-                ModelState.AddModelError("File", "File must be less than 5MB");
-                return View();
+                if (!vm.File.IsValidType("image"))
+                    ModelState.AddModelError("File", "File must be image");
+                if (!vm.File.IsValidSize(5 * 1024))
+                    ModelState.AddModelError("File", "File must be less than 5MB");
+
+                string newFileName = await vm.File.UploadAsync("wwwroot", "imgs", "sliders");
+                slider.ImageUrl = newFileName;
             }
+
 
             if (!ModelState.IsValid)
             {
                 return View();
             }
-            string newFileName = await vm.File.UploadAsync("wwwroot", "imgs", "sliders");
 
-            Slider slider = new Slider
-            {
-                Title = vm.Title,
-                Subtitle_1 = vm.Subtitle_1,
-                Subtitle_2 = vm.Subtitle_2,
-                Link = vm.Link,
-                ImageUrl = newFileName
-            };
+
+            slider.Title = vm.Title;
+            slider.Subtitle_1 = vm.Subtitle_1;
+            slider.Subtitle_2 = vm.Subtitle_2;
+            slider.Link = vm.Link;
 
             await _context.AddAsync(slider);
 
             await _context.SaveChangesAsync();
-
 
             return RedirectToAction(nameof(Index));
         }
@@ -64,7 +68,11 @@ namespace ProniaMVC.Areas.Admin.Controllers
             {
                 return BadRequest();
             }
-            Slider? data = await _context.Sliders.FindAsync(id);
+
+            var data = await _context.Sliders.FindAsync(id);
+            if (data is null)
+                return NotFound();
+
 
             SliderUpdateVM vm = new SliderUpdateVM();
 
@@ -78,15 +86,25 @@ namespace ProniaMVC.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(int? id, SliderUpdateVM vm)
         {
+
+            if (vm == null)
+            {
+                ModelState.AddModelError("File", "File is required or file size exceeds the limit.");
+                return View(vm);
+            }
+
+            if (!id.HasValue) return BadRequest();
+
             var data = await _context.Sliders.FindAsync(id);
 
             if (data is null) return NotFound();
+
             if (vm.File != null)
             {
-                if (!vm.File.IsValidType("image"))
+                if (!vm.File!.IsValidType("image"))
                     ModelState.AddModelError("File", "File type must be image");
 
-                if (!vm.File.IsValidSize(5 * 1024))
+                if (!vm.File!.IsValidSize(5 * 1024))
                     ModelState.AddModelError("File", "File size must be less than 5MB");
 
                 string oldFilePath = Path.Combine(_env.WebRootPath, "imgs", "sliders", data.ImageUrl);
@@ -99,8 +117,9 @@ namespace ProniaMVC.Areas.Admin.Controllers
                 string newFileName = await vm.File.UploadAsync("wwwroot", "imgs", "sliders");
                 data.ImageUrl = newFileName;
             }
+
             if (!ModelState.IsValid) return View(vm);
-            return View(vm);
+
             data.Link = vm.Link;
             data.Subtitle_1 = vm.Subtitle_1;
             data.Subtitle_2 = vm.Subtitle_2;

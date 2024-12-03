@@ -1,0 +1,156 @@
+In a big city, people can face various problems with their neighbors. 
+For example, issues with the upstairs neighbor can arise from noise, like footsteps while walking. 
+In addition, water leaks from the bathroom or other disturbances can cause problems for those living below. 
+These types of issues are common in apartment buildings and can create tension between neighbors.
+
+
+
+proportion
+
+
+
+fraction 
+
+
+
+number 
+
+
+percentage 
+
+
+account for 
+
+comprises of 
+
+
+represent 
+
+make up 
+
+consist of 
+
+
+greatest source
+
+
+
+Sodium and saturated fat are most commonly consumed at lunch.
+
+
+Parametr olaraq, @RatingId qebul edib, hemin parametrde olan Movielerin sayini geri qaytaran function yazirsiniz
+Parametr olaraq, @RatingId qebul edib, hemin parametrde olan Movielerin Adini geri qaytaran function yazirsiniz
+
+
+
+
+create database LibraryDB
+
+
+use LibraryDB
+
+create table Authors (
+    [Id] int identity(1,1) primary key,
+    [Name] nvarchar(50) not null,
+    [Surname] nvarchar(50) not null
+)
+
+create table Books (
+    [Id] int identity(1,1) primary key,
+    [Name] nvarchar(100) not null unique,
+    [PageCount] int not null check ([PageCount] > 10),
+    [AuthorId] int foreign key references Authors(Id),
+    check (len([Name]) > 2 and len([Name]) < 100)
+)
+
+
+create view GetFullInfoBook as
+select 
+    Books.Id as BookId,
+    Books.Name as BookName,
+    Books.PageCount,
+    (Authors.Name + ' ' + Authors.Surname) as [Author FullName]
+from Books
+join Authors on Books.AuthorId = Authors.Id
+
+
+
+create view AuthorBooksInfo 
+as
+select 
+    (Authors.Name + ' ' + Authors.Surname) as [Author FullName],
+    max(Books.PageCount) as MaxPageCount,
+    count(*) as BookCount
+from Books
+join Authors on Books.AuthorId = Authors.Id
+group by Authors.Name, Authors.Surname;
+
+
+create procedure DeleteAuthor
+    @Id int
+as
+begin
+    delete from Authors where Id = @Id;
+end
+
+create procedure InsertAuthor
+    @Name nvarchar(100),
+    @Surname nvarchar(100)
+as
+begin
+    insert into Authors (Name, Surname)
+    values (@Name, @Surname)
+end
+
+create procedure SearchBooks @Name nvarchar(100)
+as
+begin
+    select 
+        Books.Id as BookId,
+        Books.Name as BookName,
+        Books.PageCount,
+        (Authors.Name + ' ' + Authors.Surname) as [Author FullName]
+    from Books
+    join Authors on Books.AuthorId = Authors.Id
+    where Books.Name = @Name 
+       or Authors.Name = @Name
+       or Authors.Surname = @Name;
+end
+
+create procedure UpdateAuthor
+    @Id int,
+    @Name nvarchar(100),
+    @Surname nvarchar(100)
+as
+begin
+    update Authors
+    set Name = @Name, Surname = @Surname
+    where Id = @Id;
+end
+
+
+
+
+
+I believe people should spend their free time actively to recharge and connect with others. 
+I usually spend my free time playing computer games with my friends, which is both entertaining and social. 
+At the same time, we chat through voice calls while playing, making it even more enjoyable.
+
+
+
+ Scaffold-DbContext "Server=.\SQLEXPRESS;Database=TodoEF;Trusted_Connection=True;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -ContextDir Contexts -OutputDir Models
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
